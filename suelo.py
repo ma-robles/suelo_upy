@@ -3,12 +3,13 @@ from machine import Pin, ADC, I2C, RTC, SDCard, reset
 import onewire
 import ds3231
 import os
+from info import *
 
 pines = {}
 pines['led'] = 13
 pines['tmp'] = 15
 pines['adc'] = [ 4, ]
-print('iniciando...')
+print('iniciando... ID= ', ID )
 
 led = Pin( pines['led'], Pin.OUT)
 led.off()
@@ -72,10 +73,9 @@ except:
     reset()
 path_SD = '/sd'
 
-print( 'ADC0,Temperatura')
+print( 'ID,ADC0,Temperatura')
 time.sleep(3)
 
-time_sample = 1
 time_msample = (time_sample * 60 *1000) - 750
 while (True):
     ds.convert_temp()
@@ -89,11 +89,11 @@ while (True):
         
     for rom in roms:
         data.append(ds.read_temp(rom))
-    msg = date
+    msg = ID + date
     msg += ','.join(map(str,data) ) 
 
     print( msg )
-    filename = path_SD + '/data_{}{:02d}{:02d}.csv'.format(*now)
+    filename = path_SD + '/data_{}_{}{:02d}{:02d}.csv'.format( ID, *now)
     print('guardando en', filename)
     try:
         os.mount(sdcrd , path_SD )
